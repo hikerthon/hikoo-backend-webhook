@@ -29,7 +29,7 @@ app.post('/pushed', (req, res) => {
 	const hash = body.after;
 	const branch = body.ref;
 
-	if (branch !== 'refs/heads/develop') {
+	if (branch !== 'refs/heads/master') {
 		res.json({success: false});
                 return;
 	}
@@ -37,19 +37,19 @@ app.post('/pushed', (req, res) => {
 	const deploy = exec(`./deploy ${repo} ${hash} hikoo-backend`, (err, stdout, stderr) => {
 		if (err) {
 			console.error(err);
-			lineNotify.notify({message: `Deploy ${hash} failed with message ${err.message}`}).then(console.log).catch(console.log);
+			lineNotify.notify({message: `Deploy ${repo} ${hash} failed with message ${err.message}`}).then(console.log).catch(console.log);
 			return;
 		}
 	});
 
 	deploy.on('exit', code => {
 		if (code !== 0) {
-			lineNotify.notify({message: `Deploy ${hash} failed with code ${code}`}).then(console.log).catch(console.log);
+			lineNotify.notify({message: `Deploy ${repo} ${hash} failed with code ${code}`}).then(console.log).catch(console.log);
 			console.error(`Deploy failed with code ${code}`);
 			return;
 		}
 
-		lineNotify.notify({message: `Deploy ${hash} success`}).then(console.log).catch(console.log);
+		lineNotify.notify({message: `Deploy ${repo} ${hash} success`}).then(console.log).catch(console.log);
 		console.log(`Deploy ${hash} success`);
 	});
 
